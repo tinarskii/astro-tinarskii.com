@@ -1,0 +1,88 @@
+---
+interface Props {
+    about: string,
+    name: string,
+    nick: string,
+    aka: string,
+    dob: Date,
+    age: number,
+    jobs: string,
+    language: string
+    contact: any
+}
+
+const {data} = Astro.props
+---
+
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+  {/* Personal Information */}
+    <section class="flex w-full flex-col gap-4">
+        <header
+                id="info"
+                class="cursor-pointer text-center text-4xl lg:text-left"
+        >
+            <a href="#info">🎈Personal Information</a>
+        </header>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="grid grid-cols-2 items-center gap-6">
+                <p>
+                    <b>Name</b>
+                </p>
+                <p>{data.about.name}</p>
+                <p>
+                    <b>Nickname</b>
+                </p>
+                <p>{data.about.nick}</p>
+                <p>
+                    <b>Also Known As</b>
+                </p>
+                <p>{data.about.aka}</p>
+                <p>
+                    <b>Date of Birth</b>
+                </p>
+                <p>{new Date(data.about.dob).toLocaleDateString("ja-JP")}</p>
+                <p>
+                    <b>Age</b>
+                </p>
+                <p>{data.about.age}</p>
+                <p>
+                    <b>Occupations</b>
+                </p>
+                <p>{data.about.jobs}</p>
+                <p>
+                    <b>Languages</b>
+                </p>
+                <p>{data.about.language}</p>
+            </div>
+        </div>
+    </section>
+
+  {/* Social Media */}
+    <section class="flex w-full flex-col gap-4">
+        <header
+                id="connect"
+                class="cursor-pointer text-center text-4xl lg:text-left"
+        >
+            <a href="#connect">📱Social Media</a>
+        </header>
+        <div class="lg:gris-cols-2 grid grid-cols-1 gap-6">
+            <div class="grid grid-cols-2 items-center gap-6">
+              {data.contact.map((l: any, idx: number) => {
+                if (idx % 2 === 0) {
+                  return (
+                          <p key={idx}>
+                              <b>{data.contact[idx]}</b>
+                          </p>
+                  );
+                }
+
+                return (
+                        <a href={"https://" + data.contact[idx]} key={idx + 1}>
+                          {data.contact[idx]?.split("/").pop()}
+                        </a>
+                );
+              })}
+            </div>
+        </div>
+    </section>
+</div>

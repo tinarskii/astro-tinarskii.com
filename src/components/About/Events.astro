@@ -1,0 +1,42 @@
+---
+interface Props {
+  events: any[]
+}
+const {data} = Astro.props
+---
+
+<section class="flex w-full flex-col gap-4">
+    <header class="cursor-pointer text-center text-4xl lg:text-left">
+        ✨Events
+    </header>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {data.events.map(evt => (
+              <section
+                      class="rounded-lg bg-white/10 bg-center"
+                      key={evt.name}
+              >
+                  <div class="flex h-full w-full flex-col justify-center gap-4 rounded-lg bg-black/75 p-6">
+                      <div class="flex flex-col items-center justify-center">
+                          <p class="text-xl">
+                              <b>{evt.name}</b>
+                          </p>
+                          <p>(Organized by {evt.org})</p>
+                      </div>
+                      <p>as a {evt.roles}</p>
+                      <p>{evt.info}</p>
+                      <div class="flex flex-col items-center justify-center">
+                        {evt.award && <p>Awards: {evt.award}</p>}
+                        {evt.links && (
+                                <p>
+                                    Links:
+                                    <a href={evt.links} class="underline">
+                                        Watch
+                                    </a>
+                                </p>
+                        )}
+                      </div>
+                  </div>
+              </section>
+        ))}
+    </div>
+</section>

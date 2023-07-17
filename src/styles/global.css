@@ -1,67 +1,113 @@
-/*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
-body {
-	font-family: Verdana, sans-serif;
-	margin: auto;
-	padding: 20px;
-	max-width: 65ch;
-	text-align: left;
-	background-color: #fff;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	line-height: 1.5;
-	color: #444;
+@import url("https://fonts.googleapis.com/css2?family=Germania+One&family=IBM+Plex+Sans+Thai+Looped:wght@400;600;700&family=Noto+Serif+Thai:wght@400;700&family=Urbanist:ital,wght@0,500;0,900;1,500;1,900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  overflow-x: hidden;
+  @apply py-2;
 }
+
+.page-layout {
+  @apply m-auto grid w-[96vw] place-items-center gap-12 pt-4 xl:w-[64vw];
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6,
-strong,
-b {
-	color: #222;
+header {
+  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
+  font-weight: 700;
 }
-a {
-	color: #3273dc;
+
+p,
+span,
+button,
+input,
+article,
+section {
+  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
 }
-nav a {
-	margin-right: 10px;
+
+.article-title {
+  font-family: "Noto Serif Thai", serif;
+  font-weight: bold;
 }
-textarea {
-	width: 100%;
-	font-size: 16px;
+
+.font-germania {
+  font-family: "Germania One", cursive;
 }
-input {
-	font-size: 16px;
+
+.content {
+  @apply col-span-3 flex flex-col gap-4;
 }
-content {
-	line-height: 1.6;
+
+ .content h1 {
+   font-size: unset;
+   font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
+   @apply text-3xl font-bold lg:text-4xl mt-8;
+ }
+
+.content h2 {
+  font-size: unset;
+  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
+  @apply text-2xl font-bold lg:text-3xl mt-8;
 }
-table {
-	width: 100%;
+
+.content h3 {
+  font-size: unset;
+  font-family: "Taviraj", "Sarabun", sans-serif;
+  @apply text-xl font-bold lg:text-2xl mt-4;
 }
-img {
-	max-width: 100%;
-	height: auto;
+
+.content blockquote {
+  @apply border-l-4 border-white/20 bg-white/10 p-4 text-lg lg:text-xl;
 }
-code {
-	padding: 2px 5px;
-	background-color: #f2f2f2;
+
+.content img,
+video {
+  @apply mx-auto my-2 max-h-[65vh] max-w-full rounded-xl object-cover;
 }
-pre {
-	padding: 1rem;
+
+.content img {
+  @apply mx-auto my-2 max-h-[65vh] max-w-full rounded-xl object-cover;
 }
-pre > code {
-	all: unset;
+
+.content figcaption {
+  @apply pb-4 text-center italic text-gray-400;
 }
-blockquote {
-	border: 1px solid #999;
-	color: #222;
-	padding: 2px 0px 2px 20px;
-	margin: 0px;
-	font-style: italic;
+
+.content p > a {
+  text-decoration: unset;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.content ul > li > a {
+  text-decoration: unset;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.content ul {
+  @apply list-inside list-disc;
+}
+
+.content iframe {
+  @apply mx-auto max-w-full rounded-xl;
+}
+
+.title {
+  font-size: unset;
+  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
+  @apply text-4xl font-bold lg:text-5xl;
+}
+
+.subtitle {
+  font-size: unset;
+  font-family: "Urbanist", "Noto Serif Thai", sans-serif;
+  @apply text-lg lg:text-xl;
 }

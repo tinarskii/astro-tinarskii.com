@@ -1,0 +1,69 @@
+---
+import {lives} from "../../live";
+export const prerender = false;
+import PageLayout from "../../layouts/PageLayout.astro";
+
+const slug = Astro.params.slug.split("/");
+
+const type = slug[0];
+const lep = slug[1];
+
+const ep = lives.find(
+  (live) => live.type.replace(/'/, "") === type && live.ep === lep
+);
+
+const epName = ep.name;
+const epThumb = ep.thumb;
+const epLinks = ep.links;
+
+const shows = epName.split("—")[0];
+const name = epName.split("—")[1];
+---
+
+<PageLayout
+        title={epName}
+        description=""
+        image={"https://tinarskii.com" + epThumb}
+>
+    <div class="flex flex-col gap-2">
+        <h1 class="text-center text-6xl font-bold">
+          {shows}
+        </h1>
+        <h2 class="text-center text-3xl">
+          {name}
+        </h2>
+    </div>
+    <iframe
+            src={"https://player.twitch.tv/?video=" +
+              ep.links.twitch.split('/videos/')[1]
+              + "&parent=tinarskii.com"}
+            frameborder="0"
+            allowfullscreen="true"
+            scrolling="no"
+            height="400"
+            width="600"
+            class="hidden md:block md:rounded-lg md:shadow-lg"
+    ></iframe>
+    <img
+            src={epThumb}
+            width="600"
+            height="400"
+            class="block rounded-lg shadow-lg md:hidden"
+    />
+    <div
+            class="flex w-full flex-col items-center justify-center gap-4 lg:w-[600px]"
+    >
+        <button
+                class="w-full rounded-xl bg-violet-600 px-8 py-4 text-2xl text-white"
+                onclick="window.open(epLinks.twitch)"
+        >
+            Watch on twitch
+        </button>
+        <button
+                class="w-full rounded-xl bg-red-600 px-8 py-4 text-2xl text-white"
+                onclick="window.open(epLinks.youtube)"
+        >
+            Watch on youtube
+        </button>
+    </div>
+</PageLayout>
