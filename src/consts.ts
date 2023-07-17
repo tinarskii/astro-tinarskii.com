@@ -1,8 +1,8 @@
 // Place any global data in this file.
 // You can import this data from anywhere in your site by using the `import` keyword.
 
-export const SITE_TITLE = "My personal website.";
-export const SITE_DESCRIPTION = "Welcome to my website!";
+export const SITE_TITLE = "Website of Tinarskii";
+export const SITE_DESCRIPTION = " I'm a student at Assumption Samutprakarn School. I love learning and teaching others. I enjoy math and science, but also love to code. I've been programming since I was 12 years old, and have been developing websites since then. I started contributing to open-source communities and have made some of the most popular sites on the web such as Wrong-Lang. My goal is to make programming accessible to everyone — not just those who are already good at it! ";
 
 export const about = {
   name: "Tinnaphat Somsang",
