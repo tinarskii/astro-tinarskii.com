@@ -124,6 +124,15 @@ export const events = [
     links: "",
     img: "https://assets.creatorsgarten.org/events/sht7.png",
   },
+  {
+    name: "การประกวดการแสดงทางวิทยาศาสตร์ ประจำปี 2566 (Science Show)",
+    org: "Phranakhon Si Ayutthaya Rajabhat University",
+    roles: "Participant (Teams)",
+    info: "งานสัปดาห์วิทยาศาสตร์แห่งชาติ ส่วนภูมิภาค ประจำปี 2566",
+    award: "5th Place (Honorable Mention)",
+    links: "",
+    img: "",
+  },
 ];
 
 export const projects = [
