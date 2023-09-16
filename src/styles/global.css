@@ -28,7 +28,8 @@ span,
 button,
 input,
 article,
-section {
+section,
+li {
   font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
 }
 
