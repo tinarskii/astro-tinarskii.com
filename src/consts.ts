@@ -81,7 +81,7 @@ export const events = [
   },
   {
     name: "Stupid Hackathon in Thailand 6 (SHiT๖)",
-    org: "Creatorsgarten Thailand",
+    org: "Creatorsgarten",
     roles: "Participant (Teams)",
     info: "The Stupid Hackathon in Thailand is a collaborative hackathon in Thailand with non-competitive intentions and no focuses on business value",
     award: "3rd MOST IMPRESSIVE TECHNOLOGY AWARD",
@@ -90,7 +90,7 @@ export const events = [
   },
   {
     name: "Bkk.js Meetup #16",
-    org: "Creatorsgarten Thailand",
+    org: "Creatorsgarten",
     roles: "Participant",
     info: "เพื่อเฉลิมฉลองเดือน บางกอกวิทยา ของกรุงเทพมหานคร กลัวมาแล้วกับ Bkk.js Meetup #16",
     award: "(NOT A COMPETITION)",
@@ -99,7 +99,7 @@ export const events = [
   },
   {
     name: "Code Golf Party #1",
-    org: "showdown.space and Creatorsgarten Thailand",
+    org: "showdown.space and Creatorsgarten",
     roles: "Participant",
     info: "⛳️Code Golf เป็นกิจกรรมนันทนาการสำหรับโปรแกรมเมอร์ เป็นกิจกรรมที่มีโจทย์ปัญหามาให้เขียนโปรแกรมแก้ แล้วมาหาวิธีแก้ที่ใช้ซอร์ซโค้ดขนาดเล็กที่สุด",
     award: "(None)",
@@ -108,7 +108,7 @@ export const events = [
   },
   {
     name: "Hacktoberfest Thailand 2022",
-    org: "Creatorsgarten Thailand and Thinc.",
+    org: "Creatorsgarten and Thinc.",
     roles: "Contributors",
     info: "We are hosting the Thailand chapter of the annual Hacktoberfest event, a global open-source contribution challenge held each year in October to introduce and incentivize people to contribute to open-source software.",
     award: "(NOT A COMPETITION)",
@@ -133,6 +133,15 @@ export const events = [
     links: "",
     img: "",
   },
+  {
+    name: "How To Learn Almost Anything ",
+    org: "Creatorsgarten, Thaicom Foundation, TKPark",
+    roles: "Participant",
+    info: "ถ้าคุณคือผู้หลงใหลในการเรียนรู้ หรือ กำลังค้นหาตัวตน เราขอชวนคุณมาแสดงความเป็นตัวเองไปกับเราในงาน “HOW TO LEARN ALMOST EVERYTHING คู่มือการเรียนรู้ (เกือบ) ทุกสิ่ง ฉบับนอกห้องเรียน” 🚌 พื้นที่ที่จะเปิดโอกาสให้คุณร่วมแลกเปลี่ยน สะท้อนมุมมองหลากความคิดหลายประสบการณ์ พร้อมปลดปล่อยจินตนาการตลอดวัน แล้วมาค้นหาตัวตนที่รอคอยการค้นพบไปด้วยกัน ❕𓂃ꕤ",
+    award: "(NOT A COMPETITION)",
+    links: "",
+    img: "",
+  },
 ];
 
 export const projects = [
@@ -151,6 +160,24 @@ export const projects = [
     info: "Collections of Thai Jokes Website",
     gh: "github.com/tinarskii/mukpakpak",
     link: "mukpakpak.vercel.app",
+    img: "/cover/mukpakpak.png",
+    full: true,
+  },
+  {
+    name: "File House",
+    from: "Tinarskii",
+    info: "Convert your files without pain(TM)",
+    gh: "github.com/tinarskii/file-house",
+    link: "",
+    img: "/cover/mukpakpak.png",
+    full: true,
+  },
+  {
+    name: "URGROWTH",
+    from: "URGROWTH",
+    info: "TBA",
+    gh: "github.com/urgrowth",
+    link: "",
     img: "/cover/mukpakpak.png",
     full: true,
   },
