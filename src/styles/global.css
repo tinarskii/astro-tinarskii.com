@@ -112,3 +112,11 @@ video {
   font-family: "Urbanist", "Noto Serif Thai", sans-serif;
   @apply text-lg lg:text-xl;
 }
+
+.gallery {
+  @apply flex flex-wrap gap-4 justify-center;
+}
+
+.gallery img {
+  @apply object-cover rounded-xl;
+}
