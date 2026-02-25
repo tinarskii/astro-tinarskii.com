@@ -1,76 +1,179 @@
 ---
-interface Props {
-    about: string,
-    name: string,
-    nick: string,
-    aka: string,
-    dob: Date,
-    age: number,
-    jobs: string,
-    language: string
-    contact: any
+const {data} = Astro.props
+
+const contactPairs = []
+for (let i = 0; i < data.contact.length; i += 2) {
+    contactPairs.push({ label: data.contact[i], url: data.contact[i + 1] })
 }
 
-const {data} = Astro.props
+const platformIcons: Record<string, string> = {
+    'Github': '⌥',
+    'Facebook': 'ƒ',
+    'Twitter': '𝕏',
+    'Twitch': '◈',
+    'Youtube': '▶',
+    'Steam': '⚙',
+    'Instagram': '◎',
+    'Discord': '⬡',
+}
 ---
 
-<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-  {/* Personal Information */}
-    <section class="flex w-full flex-col gap-4">
-        <header
-                id="info"
-                class="cursor-pointer text-center text-4xl lg:text-left"
-        >
-            <a href="#info">🎈Personal Information</a>
-        </header>
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div class="grid grid-cols-2 items-center gap-6">
-                <p>
-                    <b>Name</b>
-                </p>
-                <p>{data.about.name}</p>
-                <p>
-                    <b>Nickname</b>
-                </p>
-                <p>{data.about.nick}</p>
-                <p>
-                    <b>Also Known As</b>
-                </p>
-                <p>{data.about.aka}</p>
-                <p>
-                    <b>Languages</b>
-                </p>
-                <p>{data.about.language}</p>
-            </div>
+<div class="info-grid" id="info">
+    <!-- Personal Info -->
+    <section class="card">
+        <div class="card-header">
+            <span class="card-icon">👤</span>
+            <h2 class="card-title">Personal Info</h2>
+        </div>
+        <div class="info-rows">
+            {[
+                ['Name', data.about.name],
+                ['Nickname', data.about.nick],
+                ['Also Known As', data.about.aka],
+                ['Location', data.about.loc],
+                ['Age', `${data.about.age} years old`],
+                ['Languages', data.about.language],
+            ].map(([label, value]) => (
+              <div class="info-row">
+                  <span class="info-label">{label}</span>
+                  <span class="info-value">{value}</span>
+              </div>
+            ))}
         </div>
     </section>
 
-  {/* Social Media */}
-    <section class="flex w-full flex-col gap-4">
-        <header
-                id="connect"
-                class="cursor-pointer text-center text-4xl lg:text-left"
-        >
-            <a href="#connect">📱Social Media</a>
-        </header>
-        <div class="lg:gris-cols-2 grid grid-cols-1 gap-6">
-            <div class="grid grid-cols-2 items-center gap-6">
-              {data.contact.map((l: any, idx: number) => {
-                if (idx % 2 === 0) {
-                  return (
-                          <p key={idx}>
-                              <b>{data.contact[idx]}</b>
-                          </p>
-                  );
-                }
-
+    <!-- Social Media -->
+    <section class="card" id="connect">
+        <div class="card-header">
+            <span class="card-icon">🔗</span>
+            <h2 class="card-title">Connect</h2>
+        </div>
+        <div class="social-grid">
+            {contactPairs.map(({ label, url }) => {
+                const cleanLabel = label.trim()
+                const icon = platformIcons[cleanLabel] ?? '→'
                 return (
-                        <a href={"https://" + data.contact[idx]} key={idx + 1}>
-                          {data.contact[idx]?.split("/").pop()}
-                        </a>
-                );
-              })}
-            </div>
+                  <a
+                    href={`https://${url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="social-pill"
+                  >
+                      <span class="social-icon">{icon}</span>
+                      <span class="social-label">{cleanLabel}</span>
+                  </a>
+                )
+            })}
         </div>
     </section>
 </div>
+
+<style>
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 1.75rem;
+        transition: border-color 0.3s;
+    }
+
+    .card:hover {
+        border-color: rgba(249,115,22,0.25);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card-icon {
+        font-size: 1.4rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin: 0;
+    }
+
+    .info-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: baseline;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+    }
+
+    .info-value {
+        font-size: 0.9rem;
+        color: #cbd5e1;
+        text-align: right;
+    }
+
+    .social-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+
+    .social-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        background: rgba(249,115,22,0.08);
+        border: 1px solid rgba(249,115,22,0.2);
+        border-radius: 100px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #fb923c;
+        transition: background 0.2s, transform 0.2s, border-color 0.2s;
+    }
+
+    .social-pill:hover {
+        background: rgba(249,115,22,0.18);
+        border-color: rgba(249,115,22,0.5);
+        transform: translateY(-2px);
+    }
+
+    .social-icon {
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+
+    .social-label {
+        color: #e2e8f0;
+    }
+</style>

@@ -1,43 +1,226 @@
 ---
-interface Props {
-  projects: any[]
-}
-
 const {data} = Astro.props
+
+// Deduplicate projects by name
+const seen = new Set()
+const projects = data.projects.filter((p: any) => {
+    if (seen.has(p.name)) return false
+    seen.add(p.name)
+    return true
+})
 ---
 
-<section class="flex w-full flex-col gap-4">
-    <header class="cursor-pointer text-center text-4xl lg:text-left">
-        🧑‍💻Projects
-    </header>
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      {data.projects.map((project: any) => (
-              <section
-                      class={`rounded-xl bg-white/10 bg-center
-        bg-no-repeat`}
-                      key={project.name}
-              >
-                  <div class="flex h-full w-full flex-col items-center justify-center gap-4 rounded-lg bg-black/75 p-6 text-center">
-                      <p class="text-xl">
-                          <b>{project.name}</b> by {project.from}
-                      </p>
-        {project.info}
-          <div class="flex flex-row gap-2">
-              <a
-                      href={"https://" + project.link}
-                      class="btn-primary btn-sm btn"
-              >
-                  Visit Website
-              </a>
-              <a
-                      href={"https://" + project.gh}
-                      class="btn-ghost btn-sm btn"
-              >
-                  View Repository
-              </a>
-          </div>
-        </div>
-        </section>
+<section class="projects-section" id="projects">
+    <div class="section-header">
+        <span class="section-tag">Work</span>
+        <h2 class="section-title">Projects</h2>
+    </div>
+
+    <div class="projects-grid">
+        {projects.map((project: any) => (
+          <article class={`project-card ${project.full ? 'project-card--featured' : ''}`}>
+              {project.img && (
+                <div class="project-img-wrap">
+                    <img src={project.img} alt={project.name} class="project-img" />
+                    <div class="project-img-overlay"></div>
+                </div>
+              )}
+              <div class="project-body">
+                  <div class="project-from">{project.from}</div>
+                  <h3 class="project-name">{project.name}</h3>
+                  <p class="project-info">{project.info}</p>
+                  <div class="project-actions">
+                      {project.link && (
+                        <a
+                          href={`https://${project.link}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="btn-visit"
+                        >
+                            Visit ↗
+                        </a>
+                      )}
+                      {project.gh && (
+                        <a
+                          href={`https://${project.gh}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="btn-repo"
+                        >
+                            GitHub
+                        </a>
+                      )}
+                  </div>
+              </div>
+          </article>
         ))}
-        </div>
-        </section>
+    </div>
+</section>
+
+<style>
+    .projects-section {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .section-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #f97316;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #f1f5f9;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .projects-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .projects-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .projects-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    .project-card {
+        display: flex;
+        flex-direction: column;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 18px;
+        overflow: hidden;
+        transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .project-card:hover {
+        border-color: rgba(249,115,22,0.25);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+    }
+
+    .project-card--featured {
+        border-color: rgba(249,115,22,0.2);
+    }
+
+    .project-card--featured:hover {
+        border-color: rgba(249,115,22,0.5);
+        box-shadow: 0 16px 48px rgba(249,115,22,0.08);
+    }
+
+    .project-img-wrap {
+        position: relative;
+        height: 150px;
+        overflow: hidden;
+    }
+
+    .project-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .project-card:hover .project-img {
+        transform: scale(1.06);
+    }
+
+    .project-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(10,10,20,0.8) 0%, transparent 60%);
+    }
+
+    .project-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+    }
+
+    .project-from {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #f97316;
+    }
+
+    .project-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .project-info {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        line-height: 1.6;
+        margin: 0;
+        flex: 1;
+    }
+
+    .project-actions {
+        display: flex;
+        gap: 0.6rem;
+        margin-top: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-visit {
+        padding: 0.4rem 1rem;
+        background: linear-gradient(135deg, rgba(249,115,22,0.8), rgba(219,39,119,0.8));
+        color: white;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .btn-visit:hover {
+        opacity: 0.85;
+        transform: translateY(-1px);
+    }
+
+    .btn-repo {
+        padding: 0.4rem 1rem;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #94a3b8;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-repo:hover {
+        background: rgba(255,255,255,0.1);
+        color: #e2e8f0;
+    }
+</style>

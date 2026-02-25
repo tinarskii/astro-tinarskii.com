@@ -14,10 +14,130 @@ type Props = CollectionEntry<'articles'>;
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+// Get related posts (same tags, excluding current)
+const allPosts = await getCollection('articles');
+const related = allPosts
+	.filter(p =>
+		p.slug !== post.slug &&
+		p.data.tags?.some((t: string) => post.data.tags?.includes(t))
+	)
+	.slice(0, 3);
 ---
 
 <BlogPost {...post.data}>
 	<div class="content">
 		<Content />
 	</div>
+
+	{related.length > 0 && (
+		<div class="related-posts">
+			<h3 class="related-heading">Related Articles</h3>
+			<div class="related-grid">
+				{related.map((p: any) => (
+					<a href={`/articles/${p.slug}`} class="related-card">
+						{p.data.heroImage && (
+							<div class="related-img-wrap">
+								<img src={p.data.heroImage} alt={p.data.title} class="related-img" />
+							</div>
+						)}
+						<div class="related-body">
+							<h4 class="related-title">{p.data.title}</h4>
+							<p class="related-desc">
+								{p.data.description.length > 80
+									? p.data.description.slice(0, 77) + '...'
+									: p.data.description}
+							</p>
+						</div>
+					</a>
+				))}
+			</div>
+		</div>
+	)}
 </BlogPost>
+
+<style>
+	.related-posts {
+		margin-top: 4rem;
+		padding-top: 2.5rem;
+		border-top: 1px solid rgba(255,255,255,0.07);
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.related-heading {
+		font-size: 0.72rem;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+		color: #475569;
+		margin: 0;
+	}
+
+	.related-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 640px) {
+		.related-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.related-card {
+		display: flex;
+		flex-direction: column;
+		background: rgba(255,255,255,0.03);
+		border: 1px solid rgba(255,255,255,0.07);
+		border-radius: 14px;
+		overflow: hidden;
+		text-decoration: none;
+		transition: border-color 0.3s, transform 0.3s;
+	}
+
+	.related-card:hover {
+		border-color: rgba(249,115,22,0.3);
+		transform: translateY(-3px);
+	}
+
+	.related-img-wrap {
+		height: 100px;
+		overflow: hidden;
+	}
+
+	.related-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.5s;
+	}
+
+	.related-card:hover .related-img {
+		transform: scale(1.06);
+	}
+
+	.related-body {
+		padding: 0.9rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.related-title {
+		font-size: 0.88rem;
+		font-weight: 800;
+		color: #e2e8f0;
+		margin: 0;
+		line-height: 1.3;
+	}
+
+	.related-desc {
+		font-size: 0.78rem;
+		color: #64748b;
+		margin: 0;
+		line-height: 1.5;
+	}
+</style>

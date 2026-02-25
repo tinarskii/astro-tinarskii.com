@@ -1,122 +1,200 @@
-@import url("https://fonts.googleapis.com/css2?family=Germania+One&family=IBM+Plex+Sans+Thai+Looped:wght@400;600;700&family=Noto+Serif+Thai:wght@400;700&family=Urbanist:ital,wght@0,500;0,900;1,500;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Sans+Thai+Looped:wght@400;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-bg: #080b12;
+  --color-surface: rgba(255,255,255,0.03);
+  --color-border: rgba(255,255,255,0.08);
+  --color-accent: #f97316;
+  --color-accent-2: #db2777;
+  --color-text: #cbd5e1;
+  --color-heading: #f1f5f9;
+  --color-muted: #64748b;
+  --font-display: 'Syne', 'IBM Plex Sans Thai Looped', sans-serif;
+  --font-body: 'DM Sans', 'IBM Plex Sans Thai Looped', sans-serif;
+  --radius: 16px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html {
   overflow-x: hidden;
-  @apply py-2;
+  background: var(--color-bg);
+  color: var(--color-text);
+  scroll-behavior: smooth;
 }
 
+body {
+  font-family: var(--font-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, header {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+}
+
+p, span, button, input, article, section, li {
+  font-family: var(--font-body);
+}
+
+/* Page layout */
 .page-layout {
-  @apply m-auto grid w-[96vw] place-items-center gap-12 pt-4 xl:w-[64vw];
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 1.5rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-header {
-  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
-  font-weight: 700;
+@media (min-width: 768px) {
+  .page-layout {
+    padding: 2rem 2rem 5rem;
+  }
 }
 
-p,
-span,
-button,
-input,
-article,
-section,
-li {
-  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.article-title {
-  font-family: "Noto Serif Thai", serif;
-  font-weight: bold;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.font-germania {
-  font-family: "Germania One", cursive;
+::-webkit-scrollbar-thumb {
+  background: rgba(249,115,22,0.3);
+  border-radius: 3px;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249,115,22,0.5);
+}
+
+/* Selection */
+::selection {
+  background: rgba(249,115,22,0.25);
+  color: #fff;
+}
+
+/* Article content (blog posts etc.) */
 .content {
-  @apply col-span-3 flex flex-col gap-4;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
- .content h1 {
-   font-size: unset;
-   font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
-   @apply text-3xl font-bold lg:text-4xl mt-8;
- }
+.content h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin-top: 2.5rem;
+}
 
 .content h2 {
-  font-size: unset;
-  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
-  @apply text-2xl font-bold lg:text-3xl mt-8;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  margin-top: 2rem;
 }
 
 .content h3 {
-  font-size: unset;
-  font-family: "Taviraj", "Sarabun", sans-serif;
-  @apply text-xl font-bold lg:text-2xl mt-4;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
 }
 
 .content blockquote {
-  @apply border-l-4 border-white/20 bg-white/10 p-4 text-lg lg:text-xl;
+  border-left: 3px solid var(--color-accent);
+  background: rgba(249,115,22,0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: #94a3b8;
 }
 
-.content img,
-video {
-  @apply mx-auto my-2 max-h-[65vh] max-w-full rounded-xl object-cover;
-}
-
-.content img {
-  @apply mx-auto my-2 max-h-[65vh] max-w-full rounded-xl object-cover;
+.content img, video {
+  max-width: 100%;
+  border-radius: 12px;
+  display: block;
+  margin: 1rem auto;
 }
 
 .content figcaption {
-  @apply pb-4 text-center italic text-gray-400;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-top: -0.5rem;
 }
 
-.content p > a {
-  text-decoration: unset;
-  text-decoration: underline;
-  font-weight: 700;
-}
-
+.content p > a,
 .content ul > li > a {
-  text-decoration: unset;
+  color: var(--color-accent);
   text-decoration: underline;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .content ul {
-  @apply list-inside list-disc;
+  list-style: disc;
+  padding-left: 1.5rem;
 }
 
 .content iframe {
-  @apply mx-auto max-w-full rounded-xl;
+  max-width: 100%;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
 }
 
 .title {
-  font-size: unset;
-  font-family: "Urbanist", "IBM Plex Sans Thai Looped", sans-serif;
-  @apply text-4xl font-bold lg:text-5xl;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--color-heading);
 }
 
 .subtitle {
-  font-size: unset;
-  font-family: "Urbanist", "Noto Serif Thai", sans-serif;
-  @apply text-lg lg:text-xl;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--color-muted);
 }
 
+/* Utility: gallery */
 .gallery {
-  @apply flex flex-wrap gap-4 justify-center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .gallery img {
-  @apply object-cover rounded-xl;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Smooth section reveals */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section {
+  animation: fadeUp 0.5s ease both;
 }

@@ -1,63 +1,157 @@
 ---
-interface Props {
-  technology: any;
-  interests: any;
-}
 const {data} = Astro.props
 ---
 
-<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-  {/* Tech */}
-    <section class="flex w-full flex-col gap-4">
-        <header class="cursor-pointer text-center text-4xl lg:text-left">
-            💻Technology
-        </header>
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div class="grid grid-cols-2 items-center gap-6">
-                <p>
-                    <b>Programming Languages</b>
-                </p>
-              {data.technology.lang.join(", ")}
-                <p>
-                    <b>Frameworks</b>
-                </p>
-              {data.technology.framework.join(", ")}
-                <p>
-                    <b>IDEs</b>
-                </p>
-              {data.technology.ides.join(", ")}
-                <p>
-                    <b>Tools</b>
-                </p>
-              {data.technology.tools.join(", ")}
-                <p>
-                    <b>Other</b>
-                </p>
-              {data.technology.misc.join(", ")}
-            </div>
+<div class="tech-interests-grid">
+    <!-- Technology -->
+    <section class="card">
+        <div class="card-header">
+            <span class="card-icon">💻</span>
+            <h2 class="card-title">Technology</h2>
+        </div>
+        <div class="tech-groups">
+            {([
+                ['Languages', data.technology.lang],
+                ['Frameworks', data.technology.framework],
+                ['IDEs', data.technology.ides],
+                ['Tools', data.technology.tools],
+                ['Infrastructure', data.technology.misc],
+            ] as [string, string[]][]).map(([label, items]) => (
+              <div class="tech-group">
+                  <span class="tech-group-label">{label}</span>
+                  <div class="tag-cluster">
+                      {items.map((item: string) => (
+                        <span class="tag">{item}</span>
+                      ))}
+                  </div>
+              </div>
+            ))}
         </div>
     </section>
 
-  {/* Interests */}
-    <section class="flex w-full flex-col gap-4">
-        <header class="cursor-pointer text-center text-4xl lg:text-left">
-            💍Interests
-        </header>
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 w-full">
-            <div class="grid grid-cols-2 items-center gap-6 w-full">
-                <p>
-                    <b>Subject</b>
-                </p>
-              {data.interests.subject.join(", ")}
-                <p>
-                    <b>Games</b>
-                </p>
-              {data.interests.games.join(", ")}
-                <p>
-                    <b>Music</b>
-                </p>
-              {data.interests.music.join(", ")}
-            </div>
+    <!-- Interests -->
+    <section class="card">
+        <div class="card-header">
+            <span class="card-icon">🎯</span>
+            <h2 class="card-title">Interests</h2>
+        </div>
+        <div class="tech-groups">
+            {([
+                ['Subjects', data.interests.subject],
+                ['Games', data.interests.games],
+                ['Music', data.interests.music],
+            ] as [string, string[]][]).map(([label, items]) => (
+              <div class="tech-group">
+                  <span class="tech-group-label">{label}</span>
+                  <div class="tag-cluster">
+                      {items.map((item: string) => (
+                        <span class="tag tag--interest">{item}</span>
+                      ))}
+                  </div>
+              </div>
+            ))}
         </div>
     </section>
 </div>
+
+<style>
+    .tech-interests-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .tech-interests-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 1.75rem;
+        transition: border-color 0.3s;
+    }
+
+    .card:hover {
+        border-color: rgba(249,115,22,0.25);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card-icon {
+        font-size: 1.4rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin: 0;
+    }
+
+    .tech-groups {
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+    }
+
+    .tech-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .tech-group-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #475569;
+    }
+
+    .tag-cluster {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .tag:hover {
+        background: rgba(249,115,22,0.12);
+        border-color: rgba(249,115,22,0.3);
+        color: #fb923c;
+    }
+
+    .tag--interest {
+        background: rgba(124,58,237,0.08);
+        border-color: rgba(124,58,237,0.2);
+        color: #c4b5fd;
+    }
+
+    .tag--interest:hover {
+        background: rgba(124,58,237,0.18);
+        border-color: rgba(124,58,237,0.4);
+        color: #a78bfa;
+    }
+</style>

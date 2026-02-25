@@ -1,42 +1,222 @@
 ---
-interface Props {
-  events: any[]
-}
 const {data} = Astro.props
+
+const hasAward = (award: string) => award && award !== '(None)' && award !== '(NOT A COMPETITION)'
+const isCompetition = (award: string) => award && award !== '(NOT A COMPETITION)'
 ---
 
-<section class="flex w-full flex-col gap-4">
-    <header class="cursor-pointer text-center text-4xl lg:text-left">
-        ✨Events
-    </header>
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      {data.events.map(evt => (
-              <section
-                      class="rounded-lg bg-white/10 bg-center"
-                      key={evt.name}
-              >
-                  <div class="flex h-full w-full flex-col justify-center gap-4 rounded-lg bg-black/75 p-6">
-                      <div class="flex flex-col items-center justify-center">
-                          <p class="text-xl">
-                              <b>{evt.name}</b>
-                          </p>
-                          <p>(Organized by {evt.org})</p>
-                      </div>
-                      <p>as a {evt.roles}</p>
-                      <p>{evt.info}</p>
-                      <div class="flex flex-col items-center justify-center">
-                        {evt.award && <p>Awards: {evt.award}</p>}
-                        {evt.links && (
-                                <p>
-                                    Links:
-                                    <a href={evt.links} class="underline">
-                                        Watch
-                                    </a>
-                                </p>
-                        )}
-                      </div>
-                  </div>
-              </section>
-        ))}
-    </div>
-</section>
+<section class="events-section">
+  <div class="section-header">
+    <span class="section-tag">Highlights</span>
+    <h2 class="section-title">Events & Awards</h2>
+  </div>
+
+  <div class="events-grid">
+    {data.events.map((evt: any) => (
+      <article class={`event-card ${hasAward(evt.award) ? 'has-award' : ''}`}>
+        {evt.img && (
+          <div class="event-img-wrap">
+            <img src={evt.img} alt={evt.name} class="event-img"/>
+          </div>
+        )}
+        <div class="event-body">
+          <div class="event-meta-top">
+            <span class="event-org">{evt.org}</span>
+            <span class="event-role">{evt.roles}</span>
+          </div>
+          <h3 class="event-name">{evt.name}</h3>
+          {evt.info && <p class="event-info">{evt.info}</p>}
+          <div class="event-footer">
+            {isCompetition(evt.award) && (
+              <span class={`award-badge ${hasAward(evt.award) ? 'award-badge--won' : 'award-badge--none'}`}>
+                {hasAward(evt.award) ? `🏆 ${evt.award}` : 'Non-competitive'}
+              </span>
+            )}
+            {evt.links && (
+              <a href={evt.links} target="_blank" rel="noopener noreferrer" class="event-link">
+                Watch →
+              </a>
+            )}
+          </div>
+        </div>
+      </article>
+      ))}
+      </div>
+      </section>
+
+      <style>
+          .events-section {
+              display: flex;
+              flex-direction: column;
+              gap: 2rem;
+          }
+
+          .section-header {
+              display: flex;
+              flex-direction: column;
+              gap: 0.4rem;
+          }
+
+          .section-tag {
+              font-size: 0.75rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.12em;
+              color: #f97316;
+          }
+
+          .section-title {
+              font-size: 2rem;
+              font-weight: 900;
+              color: #f1f5f9;
+              margin: 0;
+              letter-spacing: -0.02em;
+          }
+
+          .events-grid {
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 1rem;
+          }
+
+          @media (min-width: 768px) {
+              .events-grid {
+                  grid-template-columns: repeat(2, 1fr);
+              }
+          }
+
+          .event-card {
+              display: flex;
+              flex-direction: column;
+              background: rgba(255, 255, 255, 0.03);
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              border-radius: 18px;
+              overflow: hidden;
+              transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+          }
+
+          .event-card:hover {
+              border-color: rgba(255, 255, 255, 0.14);
+              transform: translateY(-3px);
+              box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+          }
+
+          .event-card.has-award {
+              border-color: rgba(251, 191, 36, 0.2);
+          }
+
+          .event-card.has-award:hover {
+              border-color: rgba(251, 191, 36, 0.45);
+              box-shadow: 0 12px 40px rgba(251, 191, 36, 0.08);
+          }
+
+          .event-img-wrap {
+              height: 160px;
+              overflow: hidden;
+          }
+
+          .event-img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.5s;
+          }
+
+          .event-card:hover .event-img {
+              transform: scale(1.05);
+          }
+
+          .event-body {
+              padding: 1.25rem;
+              display: flex;
+              flex-direction: column;
+              gap: 0.6rem;
+              flex: 1;
+          }
+
+          .event-meta-top {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+          }
+
+          .event-org {
+              font-size: 0.72rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.08em;
+              color: #64748b;
+          }
+
+          .event-role {
+              font-size: 0.72rem;
+              font-weight: 600;
+              color: #94a3b8;
+              background: rgba(255, 255, 255, 0.05);
+              border-radius: 6px;
+              padding: 0.15rem 0.5rem;
+          }
+
+          .event-name {
+              font-size: 1rem;
+              font-weight: 800;
+              color: #f1f5f9;
+              margin: 0;
+              line-height: 1.3;
+          }
+
+          .event-info {
+              font-size: 0.85rem;
+              color: #94a3b8;
+              line-height: 1.6;
+              margin: 0;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+          }
+
+          .event-footer {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: auto;
+              padding-top: 0.5rem;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+          }
+
+          .award-badge {
+              font-size: 0.78rem;
+              font-weight: 700;
+              border-radius: 8px;
+              padding: 0.3rem 0.6rem;
+          }
+
+          .award-badge--won {
+              background: rgba(251, 191, 36, 0.12);
+              border: 1px solid rgba(251, 191, 36, 0.3);
+              color: #fbbf24;
+          }
+
+          .award-badge--none {
+              background: rgba(148, 163, 184, 0.08);
+              border: 1px solid rgba(148, 163, 184, 0.15);
+              color: #64748b;
+          }
+
+          .event-link {
+              font-size: 0.82rem;
+              font-weight: 700;
+              color: #f97316;
+              text-decoration: none;
+              transition: opacity 0.2s;
+              margin-left: auto;
+          }
+
+          .event-link:hover {
+              opacity: 0.7;
+          }
+      </style>

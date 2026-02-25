@@ -1,0 +1,416 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('articles');
+
+  // Collect all unique tags
+  const allTags = [...new Set(posts.flatMap(p => p.data.tags ?? []))] as string[];
+
+  // One route per tag + one route for the index (no tag)
+  return [
+    { params: { slug: undefined }, props: { tag: null, posts, allTags } },
+    ...allTags.map(tag => ({
+      params: { slug: tag },
+      props: {
+        tag,
+        posts: posts.filter(p => p.data.tags?.includes(tag)),
+        allTags,
+      },
+    })),
+  ];
+}
+
+const { tag, posts, allTags } = Astro.props;
+
+const sorted = [...posts].sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<PageLayout
+  title={tag ? `Tag: ${tag}` : 'All Tags'}
+  description={tag ? `Articles tagged "${tag}"` : 'Browse articles by tag'}
+>
+  <div class="tags-wrapper">
+
+    <!-- Header -->
+    <header class="tags-header">
+      <a href="/articles/tags" class="back-link">← All Tags</a>
+      <span class="section-tag">Browse</span>
+      {tag
+        ? <h1 class="tags-title">#{tag}</h1>
+        : <h1 class="tags-title">All Tags</h1>
+      }
+      <p class="tags-subtitle">
+        {tag
+          ? `${sorted.length} article${sorted.length !== 1 ? 's' : ''}`
+          : `${allTags.length} tags across ${posts.length} articles`
+        }
+      </p>
+    </header>
+
+    <!-- Tag cloud (always shown) -->
+    <div class="tag-cloud">
+      {allTags.sort().map(t => (
+        <a
+          href={`/articles/tags/${t}`}
+          class={`tag-cloud-item ${t === tag ? 'tag-cloud-item--active' : ''}`}
+        >
+          #{t}
+        </a>
+      ))}
+    </div>
+
+    <!-- Articles for selected tag -->
+    {tag && (
+      <div class="articles-section">
+        <div class="year-label">{sorted.length} result{sorted.length !== 1 ? 's' : ''}</div>
+
+        {sorted.length === 0 && (
+          <div class="empty-state">
+            <span class="empty-icon">🏷️</span>
+            <p>No articles found for <strong>#{tag}</strong>.</p>
+          </div>
+        )}
+
+        <div class="post-list">
+          {sorted.map(p => {
+            const date = new Date(p.data.pubDate).toLocaleDateString('en-US', {
+              year: 'numeric', month: 'short', day: 'numeric'
+            });
+            return (
+              <a href={`/articles/${p.slug}`} class="post-row">
+                <div class="post-row-img-wrap">
+                  {p.data.heroImage
+                    ? <img src={p.data.heroImage} alt={p.data.title} class="post-row-img" />
+                    : <div class="post-row-img-placeholder"></div>
+                  }
+                </div>
+                <div class="post-row-body">
+                  <h3 class="post-row-title">{p.data.title}</h3>
+                  <p class="post-row-desc">
+                    {p.data.description?.length > 110
+                      ? p.data.description.slice(0, 107) + '...'
+                      : p.data.description}
+                  </p>
+                  <div class="post-row-meta">
+                    <span class="post-date">{date}</span>
+                    {p.data.tags?.filter((t: string) => t !== tag).slice(0, 2).map((t: string) => (
+                      <a href={`/articles/tags/${t}`} class="mini-tag" onclick="event.stopPropagation()">
+                        #{t}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <span class="post-row-arrow">→</span>
+              </a>
+            )
+          })}
+        </div>
+      </div>
+    )}
+
+    <!-- Tag index: show all tags with post counts -->
+    {!tag && (
+      <div class="tag-index">
+        {allTags.sort().map(t => {
+          const count = posts.filter(p => p.data.tags?.includes(t)).length;
+          return (
+            <a href={`/articles/tags/${t}`} class="tag-index-card">
+              <span class="tag-index-name">#{t}</span>
+              <span class="tag-index-count">{count} article{count !== 1 ? 's' : ''}</span>
+            </a>
+          )
+        })}
+      </div>
+    )}
+
+  </div>
+</PageLayout>
+
+<style>
+    .tags-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    /* ── Header ── */
+    .tags-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .back-link {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
+        text-decoration: none;
+        width: fit-content;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #f97316;
+    }
+
+    .section-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #f97316;
+        margin-top: 0.5rem;
+    }
+
+    .tags-title {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 900;
+        color: #f1f5f9;
+        margin: 0;
+        letter-spacing: -0.03em;
+        line-height: 1;
+    }
+
+    .tags-subtitle {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* ── Tag cloud ── */
+    .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .tag-cloud-item {
+        padding: 0.35rem 0.85rem;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 100px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .tag-cloud-item:hover {
+        background: rgba(249,115,22,0.1);
+        border-color: rgba(249,115,22,0.3);
+        color: #fb923c;
+        transform: translateY(-2px);
+    }
+
+    .tag-cloud-item--active {
+        background: rgba(249,115,22,0.15) !important;
+        border-color: rgba(249,115,22,0.45) !important;
+        color: #f97316 !important;
+    }
+
+    /* ── Articles section ── */
+    .articles-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .year-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #475569;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .post-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .post-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1rem;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .post-row:hover {
+        background: rgba(249,115,22,0.05);
+        border-color: rgba(249,115,22,0.2);
+        transform: translateX(4px);
+    }
+
+    .post-row-img-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .post-row-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s;
+    }
+
+    .post-row:hover .post-row-img {
+        transform: scale(1.08);
+    }
+
+    .post-row-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(219,39,119,0.12));
+    }
+
+    .post-row-body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .post-row-title {
+        font-size: 0.97rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.2s;
+    }
+
+    .post-row:hover .post-row-title {
+        color: #f8fafc;
+    }
+
+    .post-row-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .post-row-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-top: 0.15rem;
+    }
+
+    .post-date {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .mini-tag {
+        padding: 0.15rem 0.5rem;
+        background: rgba(255,255,255,0.05);
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #64748b;
+        text-decoration: none;
+        transition: color 0.2s, background 0.2s;
+    }
+
+    .mini-tag:hover {
+        color: #fb923c;
+        background: rgba(249,115,22,0.1);
+    }
+
+    .post-row-arrow {
+        font-size: 1rem;
+        color: #334155;
+        flex-shrink: 0;
+        transition: color 0.2s, transform 0.2s;
+    }
+
+    .post-row:hover .post-row-arrow {
+        color: #f97316;
+        transform: translateX(3px);
+    }
+
+    /* ── Tag index grid ── */
+    .tag-index {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .tag-index-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 1rem 1.1rem;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+        text-decoration: none;
+        transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .tag-index-card:hover {
+        border-color: rgba(249,115,22,0.3);
+        background: rgba(249,115,22,0.05);
+        transform: translateY(-3px);
+    }
+
+    .tag-index-name {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #fb923c;
+    }
+
+    .tag-index-count {
+        font-size: 0.75rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .empty-icon {
+        font-size: 2.5rem;
+        opacity: 0.4;
+    }
+
+    .empty-state p {
+        color: #475569;
+        font-size: 0.95rem;
+    }
+
+    .empty-state strong {
+        color: #94a3b8;
+    }
+</style>

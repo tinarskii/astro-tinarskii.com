@@ -2,12 +2,12 @@
 // You can import this data from anywhere in your site by using the `import` keyword.
 
 export const SITE_TITLE = "Website of Tinarskii";
-export const SITE_DESCRIPTION = " I'm a student at Assumption Samutprakarn School. I love learning and teaching others. I enjoy math and science, but also love to code. I've been programming since I was 12 years old, and have been developing websites since then. I started contributing to open-source communities and have made some of the most popular sites on the web such as Wrong-Lang. My goal is to make programming accessible to everyone — not just those who are already good at it! ";
+export const SITE_DESCRIPTION = "U da real narzeky";
 
 export const about = {
   name: "Tinnaphat Somsang",
   nick: "Tin",
-  desc: "I'm a student at Assumption Samutprakarn School. I love learning and teaching others. I enjoy math and science, but also love to code. I've been programming since I was 12 years old, and have been developing websites since then. I started contributing to open-source communities and have made some of the most popular sites on the web such as Wrong-Lang. My goal is to make programming accessible to everyone — not just those who are already good at it!",
+  desc: "",
   dob: 1226282400000,
   age: new Date(new Date().getTime() - 1226282400000).getFullYear() - 1970,
   aka: "Tinarskii",
@@ -182,12 +182,32 @@ export const events = [
 
 export const projects = [
   {
+    name: "Manao",
+    from: "Tinarskii",
+    info: "Your all-in-one Twitch and Kick chatbot for music, overlays, soundboards, and more.",
+    gh: "github.com/mymanao/manao",
+    link: "manaobot.netlify.app",
+  },
+  {
+    name: "KicKit",
+    from: "Tinarskii",
+    info: " Lightweight command framework for building Kick.com bots on top of @manaobot/kick. Designed for Bun. Built for simplicity.",
+    gh: "github.com/mymanao/kickit",
+    link: "https://www.npmjs.com/package/@manaobot/kickit",
+  },
+  {
+    name: "@manaobot/kick",
+    from: "Tinarskii",
+    info: "Minimal, type-safe JavaScript SDK for building Kick.com bots. Designed for Bun. Works anywhere.",
+    gh: "github.com/mymanao/kick",
+    link: "https://www.npmjs.com/package/@manaobot/kick",
+  },
+  {
     name: "WrongLang: Web Application",
     from: "Wrong-Lang",
     info: "The Thai Mutation Language To Normal Thai Language Global Translator",
-    gh: "github.com/wrong-lang/WrongLang",
-    link: "wl.tinarskii.com",
-    img: "/cover/wrong-lang.png",
+    gh: "github.com/website-of-tinarskii/WrongLang-Qwik",
+    link: "wronglang-qwik.pages.dev",
     full: true,
   },
   {
@@ -196,7 +216,6 @@ export const projects = [
     info: "The Thai Mutation Language To Normal Thai Language Global Translator, as a library!",
     gh: "github.com/wrong-lang/WL.js",
     link: "npmjs.com/package/wl.js",
-    img: "/cover/wrong-lang.png",
     full: true,
   },
   {
@@ -233,7 +252,6 @@ export const projects = [
     info: "Collections of Thai Jokes Website",
     gh: "github.com/tinarskii/mukpakpak",
     link: "mukpakpak.vercel.app",
-    img: "/cover/mukpakpak.png",
     full: true,
   },
   {
@@ -260,8 +278,8 @@ export const projects = [
 
 export const technology = {
   lang: ["TypeScript", "JavaScript"],
-  framework: ["Nuxt", "Solid.js", "Svelte", "Vue", "TailwindCSS"],
-  ides: ["IntelliJ IDEA Ultimate"],
+  framework: ["Nuxt"],
+  ides: ["WebStorm"],
   tools: ["Git", "GitHub Copilot"],
   misc: [
     "Vercel",
@@ -272,14 +290,11 @@ export const technology = {
 };
 
 export const interests = {
-  subject: ["Computer Science", "Sleeping", "Applied Science"],
+  subject: ["Gay Furries"],
   games: [
-    "Counter-Strike 2",
     "Overwatch 2",
-    "Half-Life 2",
-    "Portal 2",
   ],
-  music: ["The Beatles", "Rock", "John Lemon"],
+  music: ["Brazillian Phonk"],
 };
 
 export const courses = [

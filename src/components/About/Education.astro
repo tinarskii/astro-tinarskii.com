@@ -1,23 +1,164 @@
 ---
-interface Props {
-  education: { name: string, prog: string, grade: any, level: string, grad: string }
-}
-
 const {data} = Astro.props
 ---
 
-<section class="flex w-full flex-col gap-4">
-    <header class="cursor-pointer text-center text-4xl lg:text-left">
-        🎓Education
-    </header>
-    <div class="flex flex-row gap-6">
-      {data.education.map((edu: any) => (
-              <p key={edu.name}>
-                  <b>{edu.name}</b> ({edu.level}) <br/>
-                {edu.prog}, <br/>
-                  GPAX: {edu.grade} <br/>
-                  Graduate: {edu.grad || "TBD"} <br/>
-              </p>
-      ))}
+<section class="edu-section">
+    <div class="section-header">
+        <span class="section-tag">Background</span>
+        <h2 class="section-title">Education</h2>
+    </div>
+    <div class="edu-timeline">
+        {data.education.map((edu: any, i: number) => (
+          <div class="edu-card">
+              <div class="edu-card-left">
+                  <div class="edu-level-badge">{edu.level}</div>
+                  <div class="edu-line"></div>
+              </div>
+              <div class="edu-card-body">
+                  <h3 class="edu-school">{edu.name}</h3>
+                  <p class="edu-prog">{edu.prog}</p>
+                  <div class="edu-meta">
+            <span class="edu-meta-item">
+              <span class="meta-label">GPA</span>
+              <span class="meta-value gpax">{edu.grade}</span>
+            </span>
+                      <span class="edu-meta-item">
+              <span class="meta-label">Graduated</span>
+              <span class="meta-value">{edu.grad || 'In Progress'}</span>
+            </span>
+                  </div>
+              </div>
+          </div>
+        ))}
     </div>
 </section>
+
+<style>
+    .edu-section {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .section-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #f97316;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #f1f5f9;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .edu-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .edu-card {
+        display: flex;
+        gap: 1.25rem;
+        align-items: stretch;
+    }
+
+    .edu-card-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        min-width: 90px;
+    }
+
+    .edu-level-badge {
+        background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(219,39,119,0.2));
+        border: 1px solid rgba(249,115,22,0.35);
+        border-radius: 8px;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #fb923c;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .edu-line {
+        flex: 1;
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(249,115,22,0.4), transparent);
+        margin-top: 0.5rem;
+    }
+
+    .edu-card-body {
+        flex: 1;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 0;
+        transition: border-color 0.3s, background 0.3s;
+    }
+
+    .edu-card-body:hover {
+        border-color: rgba(249,115,22,0.25);
+        background: rgba(249,115,22,0.03);
+    }
+
+    .edu-school {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #f1f5f9;
+        margin: 0 0 0.4rem 0;
+    }
+
+    .edu-prog {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin: 0 0 1rem 0;
+    }
+
+    .edu-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .edu-meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .meta-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #475569;
+    }
+
+    .meta-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #cbd5e1;
+    }
+
+    .gpax {
+        color: #4ade80;
+        font-weight: 800;
+    }
+</style>

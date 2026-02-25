@@ -1,54 +1,417 @@
 ---
-import {getCollection} from 'astro:content';
+import { getCollection } from 'astro:content';
 import PageLayout from "../../layouts/PageLayout.astro";
 
 const posts = (await getCollection('articles')).sort(
-  (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+
+// Group posts by year
+const byYear: Record<string, typeof posts> = {}
+for (const post of posts) {
+    const year = new Date(post.data.pubDate).getFullYear().toString()
+    if (!byYear[year]) byYear[year] = []
+    byYear[year].push(post)
+}
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a))
 ---
 
-<PageLayout>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {posts.map(p => (
-          <div
-            onclick={"location.href = '/articles/" + p.slug + "'"}
-            class="item relative box-content flex h-full flex-none cursor-pointer snap-start"
-          >
-              <div
-                class="relative flex h-96 w-full flex-col gap-0 rounded-xl bg-black/25 bg-origin-border bg-blend-multiply"
-                style={{
-                    backgroundImage: `url(${p.data.heroImage})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                }}
-              >
-                  <div
-                    class="flex h-full w-full flex-col items-center justify-between gap-0 rounded-xl bg-black/75 p-4 duration-200 hover:bg-black/50"
-                  >
-                      <div class="flex flex-col items-center justify-center gap-12">
-                          <h1 class="article-title text-center text-xl font-bold">
-                              {p.data.title}
-                          </h1>
-                          <p class="lg:text-lg">
-                              {
-                                  p.data.description.length > 100
-                                    ? p.data.description.slice(0, 97) + "..."
-                                    : p.data.description
-                              }
-                          </p>
-                      </div>
-                      <div
-                        class="absolute bottom-2 right-0 flex w-full flex-col gap-2"
-                      >
-                          <!-- Date written -->
-                          <div class="text-center">
-                              <p class="article-title">⏰ {new Date(p.data.pubDate).toLocaleDateString()}</p>
-                          </div>
-                      </div>
+<PageLayout title="Articles" description="Writing about code, design, and more.">
+    <div class="articles-wrapper">
+
+        <!-- Page header -->
+        <header class="articles-header">
+            <span class="section-tag">Writing</span>
+            <h1 class="articles-title">Articles</h1>
+        </header>
+
+        <!-- Featured (latest) post -->
+        {posts.length > 0 && (() => {
+            const p = posts[0]
+            const date = new Date(p.data.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+            return (
+              <a href={`/articles/${p.slug}`} class="featured-card">
+                  <div class="featured-img-wrap">
+                      {p.data.heroImage
+                        ? <img src={p.data.heroImage} alt={p.data.title} class="featured-img" />
+                        : <div class="featured-img-placeholder"></div>
+                      }
+                      <div class="featured-img-overlay"></div>
+                      <span class="featured-label">Latest</span>
                   </div>
+                  <div class="featured-body">
+                      <div class="featured-meta">
+                          <span class="post-date">{date}</span>
+                          {p.data.tags?.slice(0, 3).map((tag: string) => (
+                            <span class="mini-tag">{tag}</span>
+                          ))}
+                      </div>
+                      <h2 class="featured-title">{p.data.title}</h2>
+                      <p class="featured-desc">
+                          {p.data.description.length > 160
+                            ? p.data.description.slice(0, 157) + '...'
+                            : p.data.description}
+                      </p>
+                      <span class="read-more">Read article →</span>
+                  </div>
+              </a>
+            )
+        })()}
+
+        <!-- Posts by year -->
+        {years.map(year => (
+          <div class="year-group">
+              <div class="year-label">{year}</div>
+              <div class="post-list">
+                  {byYear[year].map((p: any) => {
+                      const date = new Date(p.data.pubDate).toLocaleDateString('en-US', {
+                          month: 'short', day: 'numeric'
+                      })
+                      return (
+                        <a href={`/articles/${p.slug}`} class="post-row">
+                            <div class="post-row-img-wrap">
+                                {p.data.heroImage
+                                  ? <img src={p.data.heroImage} alt={p.data.title} class="post-row-img" />
+                                  : <div class="post-row-img-placeholder"></div>
+                                }
+                            </div>
+                            <div class="post-row-body">
+                                <h3 class="post-row-title">{p.data.title}</h3>
+                                <p class="post-row-desc">
+                                    {p.data.description.length > 100
+                                      ? p.data.description.slice(0, 97) + '...'
+                                      : p.data.description}
+                                </p>
+                                <div class="post-row-meta">
+                                    <span class="post-date">{date}</span>
+                                    {p.data.tags?.slice(0, 2).map((tag: string) => (
+                                      <span class="mini-tag">{tag}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <span class="post-row-arrow">→</span>
+                        </a>
+                      )
+                  })}
               </div>
           </div>
-            ))}
+        ))}
+
+        {posts.length === 0 && (
+          <div class="empty-state">
+              <span class="empty-icon">✍️</span>
+              <p>No articles yet. Check back soon!</p>
+          </div>
+        )}
 
     </div>
-    </PageLayout>
+</PageLayout>
+
+<style>
+    .articles-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    /* ── Header ── */
+    .articles-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .section-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #f97316;
+    }
+
+    .articles-title {
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        font-weight: 900;
+        color: #f1f5f9;
+        margin: 0;
+        letter-spacing: -0.03em;
+        line-height: 1;
+    }
+
+    .articles-subtitle {
+        font-size: 1rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* ── Featured card ── */
+    .featured-card {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(249,115,22,0.18);
+        border-radius: 20px;
+        overflow: hidden;
+        text-decoration: none;
+        transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    @media (min-width: 768px) {
+        .featured-card {
+            grid-template-columns: 420px 1fr;
+        }
+    }
+
+    .featured-card:hover {
+        border-color: rgba(249,115,22,0.45);
+        transform: translateY(-3px);
+        box-shadow: 0 20px 60px rgba(249,115,22,0.08);
+    }
+
+    .featured-img-wrap {
+        position: relative;
+        height: 260px;
+        overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+        .featured-img-wrap {
+            height: 100%;
+            min-height: 280px;
+        }
+    }
+
+    .featured-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s;
+    }
+
+    .featured-card:hover .featured-img {
+        transform: scale(1.04);
+    }
+
+    .featured-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(219,39,119,0.15));
+    }
+
+    .featured-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(8,11,18,0.3), transparent);
+    }
+
+    .featured-label {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.25rem 0.75rem;
+        background: linear-gradient(135deg, #f97316, #db2777);
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .featured-body {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .featured-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .post-date {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .mini-tag {
+        padding: 0.15rem 0.5rem;
+        background: rgba(255,255,255,0.06);
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #94a3b8;
+    }
+
+    .featured-title {
+        font-size: clamp(1.4rem, 3vw, 2rem);
+        font-weight: 900;
+        color: #f1f5f9;
+        margin: 0;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+    }
+
+    .featured-desc {
+        font-size: 0.92rem;
+        color: #94a3b8;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .read-more {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #f97316;
+        margin-top: 0.25rem;
+        transition: letter-spacing 0.2s;
+    }
+
+    .featured-card:hover .read-more {
+        letter-spacing: 0.03em;
+    }
+
+    /* ── Year groups ── */
+    .year-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .year-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #475569;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .post-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .post-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1rem;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .post-row:hover {
+        background: rgba(249,115,22,0.05);
+        border-color: rgba(249,115,22,0.2);
+        transform: translateX(4px);
+    }
+
+    .post-row-img-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .post-row-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s;
+    }
+
+    .post-row:hover .post-row-img {
+        transform: scale(1.08);
+    }
+
+    .post-row-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(219,39,119,0.12));
+    }
+
+    .post-row-body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .post-row-title {
+        font-size: 0.97rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.2s;
+    }
+
+    .post-row:hover .post-row-title {
+        color: #f8fafc;
+    }
+
+    .post-row-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .post-row-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-top: 0.15rem;
+    }
+
+    .post-row-arrow {
+        font-size: 1rem;
+        color: #334155;
+        flex-shrink: 0;
+        transition: color 0.2s, transform 0.2s;
+    }
+
+    .post-row:hover .post-row-arrow {
+        color: #f97316;
+        transform: translateX(3px);
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        opacity: 0.4;
+    }
+
+    .empty-state p {
+        color: #475569;
+        font-size: 1rem;
+    }
+</style>

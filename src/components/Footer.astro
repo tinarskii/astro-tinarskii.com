@@ -1,39 +1,124 @@
-<div class="w-full m-auto">
-	<div class="flex flex-row w-full justify-between items-center">
-		<div id="webring-wrapper">
-			<a href="https://webring.hackclub.com/" id="previousBtn" class="webring-anchor" title="Previous">‹</a>
-			<a href="https://webring.hackclub.com/" class="webring-logo" title="Hack Club Webring" alt="Hack Club Webring"></a>
-			<a href="https://webring.hackclub.com/" id="nextBtn" class="webring-anchor" title="Next">›</a>
+---
+---
+
+<footer class="footer">
+	<div class="footer-inner">
+		<!-- Webrings -->
+		<div class="webring-row">
+			<div id="webring-wrapper">
+				<a href="https://webring.hackclub.com/" id="previousBtn" class="webring-anchor" title="Previous">‹</a>
+				<a href="https://webring.hackclub.com/" class="webring-logo" title="Hack Club Webring" alt="Hack Club Webring"></a>
+				<a href="https://webring.hackclub.com/" id="nextBtn" class="webring-anchor" title="Next">›</a>
+			</div>
+			<div class="ring-icons">
+				<a href="https://creatorsgarten.org/ring" title="Creatorsgarten Ring" class="ring-icon-wrap">
+					<img src="/icons/ring-thin.svg" alt="Creatorsgarten Ring" />
+				</a>
+				<a href="https://webring.wonderful.software#tinarskii.com" title="วงแหวนเว็บ" class="ring-icon-wrap">
+					<img src="/icons/webring.svg" alt="Webring.in.th Ring" />
+				</a>
+			</div>
 		</div>
-		<div class="flex flex-row gap-4">
-			<a
-				href="https://creatorsgarten.org/ring"
-				title="Creatorsgarten Ring"
-				class="max-w-[32px]"
-			>
-				<img src="/icons/ring-thin.svg" alt="Creatorsgarten Ring"/>
-			</a>
-			<a
-				href="https://webring.wonderful.software#tinarskii.com"
-				title="วงแหวนเว็บ"
-				class="max-w-[32px]"
-			>
-				<img src="/icons/webring.svg" alt="Webring.in.th Ring"/>
-			</a>
+
+		<!-- Divider -->
+		<div class="footer-divider"></div>
+
+		<!-- Credits -->
+		<div class="footer-credit">
+			<p>
+				Made with ♥ by <strong>Tinnaphat Somsang</strong>
+			</p>
+			<p class="footer-sub">
+				No Rights Reserved ·{" "}
+				<a href="https://github.com/tinarskii/astro-tinarskii.com" class="footer-link">
+					View source ↗
+				</a>
+			</p>
 		</div>
 	</div>
-</div>
-<div
-	class="flex w-full items-center justify-center"
->
-	<p class="text-center text-gray-400">
-		Made by Tinnaphat Somsang <br />
-		No Rights Reserved.
-		<a
-			href="https://github.com/tinarskii/astro-tinarskii.com"
-			class="underline"
-		>
-			View source
-		</a>
-	</p>
-</div>
+</footer>
+
+<style>
+	.footer {
+		margin-top: 5rem;
+		padding: 2rem 1.25rem 1.5rem;
+		border-top: 1px solid rgba(255,255,255,0.06);
+	}
+
+	.footer-inner {
+		max-width: 1100px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.webring-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.ring-icons {
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+	}
+
+	.ring-icon-wrap {
+		display: flex;
+		align-items: center;
+		opacity: 0.6;
+		transition: opacity 0.2s;
+	}
+
+	.ring-icon-wrap:hover {
+		opacity: 1;
+	}
+
+	.ring-icon-wrap img {
+		width: 28px;
+		height: 28px;
+		object-fit: contain;
+	}
+
+	.footer-divider {
+		height: 1px;
+		background: rgba(255,255,255,0.05);
+	}
+
+	.footer-credit {
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.footer-credit p {
+		font-size: 0.88rem;
+		color: #64748b;
+		margin: 0;
+	}
+
+	.footer-credit strong {
+		color: #94a3b8;
+		font-weight: 600;
+	}
+
+	.footer-sub {
+		font-size: 0.82rem !important;
+	}
+
+	.footer-link {
+		color: #f97316;
+		text-decoration: none;
+		font-weight: 600;
+		transition: opacity 0.2s;
+	}
+
+	.footer-link:hover {
+		opacity: 0.7;
+	}
+</style>

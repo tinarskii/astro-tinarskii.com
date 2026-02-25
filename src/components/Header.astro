@@ -1,56 +1,191 @@
 ---
 const links = [
-  {
-    name: "Home",
-    path: "/",
-  },
-  {
-    name: "Articles",
-    path: "/articles",
-  },
-];
+    { name: "Home", path: "/" },
+    { name: "Articles", path: "/articles" },
+]
+
+const currentPath = Astro.url.pathname
 ---
 
-<div class="navbar p-4">
-    <div class="navbar-start">
-        <div class="dropdown">
-            <label tabindex="0" class="btn-ghost btn-circle btn">
-                <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="#f28c18"
-                >
-                    <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h7"
-                    />
-                </svg>
-            </label>
-            <ul
-                    tabindex="0"
-                    class="z-[9999999999] dropdown-content menu menu-compact mt-3 w-52 gap-2 rounded-lg border-2 border-primary bg-white p-2 shadow shadow-lg"
-            >
-              {links.map(link => (
-                      <a
-                              class="btn-outline btn-primary btn border-none font-bold"
-                              href={link.path}
-                      >
-                          {link.name}
-                      </a>
-              ))}
-            </ul>
+<nav class="navbar">
+    <div class="navbar-inner">
+        <!-- Logo -->
+        <a href="/" class="nav-logo mr-6">
+            <img src="/wordmark.svg" alt="Tinarskii" class="nav-wordmark" />
+        </a>
+
+        <!-- Desktop links -->
+        <div class="nav-links">
+            {links.map(link => (
+              <a
+                href={link.path}
+                class={`nav-link ${currentPath === link.path ? 'nav-link--active' : ''}`}
+              >
+                  {link.name}
+              </a>
+            ))}
         </div>
+
+        <!-- Mobile menu button -->
+        <button class="nav-mobile-btn" id="menu-toggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </div>
-    <div class="md:navbar-end">
-        <img
-                src="/wordmark.svg"
-                alt="Tinarskii's Logo"
-                onclick="location.href = '/'"
-                class="w-[300px] cursor-pointer"
-        />
+
+    <!-- Mobile dropdown -->
+    <div class="nav-mobile-menu" id="mobile-menu">
+        {links.map(link => (
+          <a href={link.path} class="nav-mobile-link">{link.name}</a>
+        ))}
     </div>
-</div>
+</nav>
+
+<script>
+    const toggle = document.getElementById('menu-toggle')
+    const menu = document.getElementById('mobile-menu')
+    toggle?.addEventListener('click', () => {
+        menu?.classList.toggle('open')
+        toggle.classList.toggle('active')
+    })
+</script>
+
+<style>
+.navbar {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 100;
+  margin-bottom: 1.5rem;
+  }
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: rgba(8,11,18,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  }
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  }
+
+.nav-wordmark {
+  height: 28px;
+  width: auto;
+  }
+
+.nav-links {
+  display: none;
+  gap: 0.25rem;
+  }
+
+@media (min-width: 640px) {
+  .nav-links {
+  display: flex;
+  }
+  }
+
+.nav-link {
+  padding: 0.4rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  }
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.06);
+  color: #f1f5f9;
+  }
+
+.nav-link--active {
+  background: rgba(249,115,22,0.12);
+  color: #fb923c;
+  }
+
+.nav-mobile-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+  }
+
+.nav-mobile-btn:hover {
+  background: rgba(255,255,255,0.06);
+  }
+
+@media (min-width: 640px) {
+  .nav-mobile-btn {
+  display: none;
+  }
+  }
+
+.nav-mobile-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #94a3b8;
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s, background 0.2s;
+  transform-origin: center;
+  }
+
+.nav-mobile-btn.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+  background: #f97316;
+  }
+.nav-mobile-btn.active span:nth-child(2) {
+  opacity: 0;
+  }
+.nav-mobile-btn.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+  background: #f97316;
+  }
+
+.nav-mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  background: rgba(8,11,18,0.95);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  }
+
+.nav-mobile-menu.open {
+  display: flex;
+  }
+
+.nav-mobile-link {
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  }
+
+.nav-mobile-link:hover {
+  background: rgba(249,115,22,0.1);
+  color: #fb923c;
+  }
+</style>

@@ -5,75 +5,351 @@ import PageLayout from './PageLayout.astro';
 type Props = CollectionEntry<'articles'>['data'];
 
 const { title, description, pubDate, tags, heroImage } = Astro.props;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+})
 ---
 
-<PageLayout
-	title={title}
-	description={description}
-	image={heroImage}
->
-	<main class="flex flex-col gap-12">
-		{/* Article Big Image */}
-		<div
-			class="h-[65vh] w-full rounded-xl"
-			style={{
-				backgroundImage: `url(${heroImage})`,
-				backgroundSize: "cover",
-				backgroundPosition: "center",
-			}}
-		>
-			{/* Article Title and Subtitles */}
-			<div class="flex h-full w-full flex-col items-center justify-center gap-12 rounded-xl bg-black/75 px-12 duration-200 hover:bg-black/50 lg:px-24">
-				<h1 class="title font-bold">{title}</h1>
-				<h2 class="subtitle font-bold">{description}</h2>
+<PageLayout title={title} description={description} image={heroImage}>
+	<article class="article-wrapper">
+
+		<!-- Hero -->
+		<div class="article-hero" style={`background-image: url(${heroImage})`}>
+			<div class="article-hero-overlay">
+				<div class="article-hero-inner">
+					<div class="article-meta-top">
+						<span class="article-date">📅 {formattedDate}</span>
+						<div class="article-tags-inline">
+							{tags.map((tag: string) => (
+								<a href={`/articles/tags/${tag}`} class="tag-pill">{tag}</a>
+							))}
+						</div>
+					</div>
+					<h1 class="article-hero-title">{title}</h1>
+					<p class="article-hero-desc">{description}</p>
+				</div>
 			</div>
 		</div>
 
-		{/* Article Container */}
-		<div class="grid grid-cols-1 gap-6 xl:grid-cols-4">
-			{/* Article Data */}
-			<div class="w-full flex-col items-center gap-4 xl:flex hidden">
-				<!-- Tags -->
-				<div class="flex flex-col items-center gap-4">
-					<h1 class="text-4xl font-bold">Tags</h1>
-					<div
-						class="flex flex-row flex-wrap items-center justify-center gap-2"
-					>
-						{tags.map(tag => (
-							<div
-								class="flex flex-row gap-2 bg-white/10 p-2"
-							>
-								<a
-									href={"/articles/tags/" + tag}
-									class="text-lg font-bold"
-								>{tag}
-								</a>
-							</div>
+		<!-- Body -->
+		<div class="article-body">
+
+			<!-- Sidebar -->
+			<aside class="article-sidebar">
+				<div class="sidebar-card">
+					<h3 class="sidebar-heading">Tags</h3>
+					<div class="sidebar-tags">
+						{tags.map((tag: string) => (
+							<a href={`/articles/tags/${tag}`} class="sidebar-tag">{tag}</a>
 						))}
 					</div>
-					<div class="divider"></div>
 				</div>
 
-				<!-- RSS -->
-				<div class="flex flex-col items-center gap-4">
-					<h1 class="text-4xl font-bold">RSS</h1>
-					<div class="flex flex-row flex-wrap gap-2">
-						<div
-							class="flex flex-row items-center justify-center gap-2 bg-orange-500/10 p-2"
-						>
-							<a href="/rss.xml" class="text-lg font-bold text-orange-400">
-								Subscribe
-							</a>
-						</div>
-					</div>
+				<div class="sidebar-card">
+					<h3 class="sidebar-heading">RSS</h3>
+					<a href="/rss.xml" class="rss-btn">
+						<span class="rss-icon">◉</span>
+						Subscribe
+					</a>
 				</div>
-			</div>
-			{/* Article Content */}
-			<div
-				class="content col-span-3 flex flex-col gap-4"
-			>
+
+				<div class="sidebar-card sidebar-toc" id="toc-container">
+					<h3 class="sidebar-heading">Contents</h3>
+					<nav class="toc-nav" id="toc"></nav>
+				</div>
+			</aside>
+
+			<!-- Content -->
+			<div class="content article-content">
 				<slot />
 			</div>
 		</div>
-	</main>
+
+	</article>
 </PageLayout>
+
+<script>
+	// Build table of contents from headings
+	const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3')
+	const toc = document.getElementById('toc')
+	const tocContainer = document.getElementById('toc-container')
+
+	if (headings.length > 1 && toc) {
+		headings.forEach((heading, i) => {
+			if (!heading.id) heading.id = `heading-${i}`
+			const level = parseInt(heading.tagName[1])
+			const a = document.createElement('a')
+			a.href = `#${heading.id}`
+			a.textContent = heading.textContent ?? ''
+			a.className = `toc-item toc-level-${level}`
+			toc.appendChild(a)
+		})
+	} else if (tocContainer) {
+		tocContainer.style.display = 'none'
+	}
+
+	// Active heading highlight
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			const id = entry.target.getAttribute('id')
+			const link = toc?.querySelector(`[href="#${id}"]`)
+			if (link) link.classList.toggle('toc-active', entry.isIntersecting)
+		})
+	}, { rootMargin: '-10% 0px -80% 0px' })
+
+	headings.forEach(h => observer.observe(h))
+</script>
+
+<style>
+.article-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	}
+
+/* ── Hero ── */
+.article-hero {
+	position: relative;
+	height: clamp(320px, 55vh, 520px);
+	width: 100%;
+	background-size: cover;
+	background-position: center;
+	border-radius: 20px;
+	overflow: hidden;
+	margin-bottom: 3rem;
+	}
+
+.article-hero-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+	to top,
+	rgba(8,11,18,0.97) 0%,
+	rgba(8,11,18,0.6) 50%,
+	rgba(8,11,18,0.2) 100%
+	);
+	display: flex;
+	align-items: flex-end;
+	transition: background 0.3s;
+	}
+
+.article-hero:hover .article-hero-overlay {
+	background: linear-gradient(
+	to top,
+	rgba(8,11,18,0.95) 0%,
+	rgba(8,11,18,0.45) 50%,
+	rgba(8,11,18,0.1) 100%
+	);
+	}
+
+.article-hero-inner {
+	padding: 2.5rem 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	max-width: 780px;
+	}
+
+.article-meta-top {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	}
+
+.article-date {
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: #94a3b8;
+	letter-spacing: 0.04em;
+	}
+
+.article-tags-inline {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	}
+
+.tag-pill {
+	padding: 0.2rem 0.65rem;
+	background: rgba(249,115,22,0.15);
+	border: 1px solid rgba(249,115,22,0.3);
+	border-radius: 100px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: #fb923c;
+	text-decoration: none;
+	text-transform: lowercase;
+	letter-spacing: 0.04em;
+	transition: background 0.2s, border-color 0.2s;
+	}
+
+.tag-pill:hover {
+	background: rgba(249,115,22,0.25);
+	border-color: rgba(249,115,22,0.5);
+	}
+
+.article-hero-title {
+	font-size: clamp(1.75rem, 4.5vw, 3rem);
+	font-weight: 900;
+	color: #f8fafc;
+	margin: 0;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	}
+
+.article-hero-desc {
+	font-size: 1rem;
+	color: #94a3b8;
+	margin: 0;
+	line-height: 1.6;
+	max-width: 560px;
+	}
+
+/* ── Body layout ── */
+.article-body {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+	align-items: start;
+	}
+
+@media (min-width: 1024px) {
+	.article-body {
+	grid-template-columns: 220px 1fr;
+	}
+	}
+
+/* ── Sidebar ── */
+.article-sidebar {
+	display: none;
+	flex-direction: column;
+	gap: 1rem;
+	position: sticky;
+	top: 5rem;
+	}
+
+@media (min-width: 1024px) {
+	.article-sidebar {
+	display: flex;
+	}
+	}
+
+.sidebar-card {
+	background: rgba(255,255,255,0.03);
+	border: 1px solid rgba(255,255,255,0.07);
+	border-radius: 14px;
+	padding: 1.1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	}
+
+.sidebar-heading {
+	font-size: 0.7rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: #475569;
+	margin: 0;
+	}
+
+.sidebar-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	}
+
+.sidebar-tag {
+	padding: 0.25rem 0.6rem;
+	background: rgba(249,115,22,0.08);
+	border: 1px solid rgba(249,115,22,0.18);
+	border-radius: 8px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: #fb923c;
+	text-decoration: none;
+	transition: background 0.2s;
+	}
+
+.sidebar-tag:hover {
+	background: rgba(249,115,22,0.18);
+	}
+
+.rss-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.45rem 0.9rem;
+	background: rgba(249,115,22,0.1);
+	border: 1px solid rgba(249,115,22,0.25);
+	border-radius: 10px;
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: #fb923c;
+	text-decoration: none;
+	transition: background 0.2s, transform 0.2s;
+	width: fit-content;
+	}
+
+.rss-btn:hover {
+	background: rgba(249,115,22,0.18);
+	transform: translateY(-1px);
+	}
+
+.rss-icon {
+	font-size: 0.9rem;
+	animation: pulse-dot 2s ease-in-out infinite;
+	}
+
+@keyframes pulse-dot {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.4; }
+	}
+
+/* ToC */
+.toc-nav {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	}
+
+:global(.toc-item) {
+	font-size: 0.78rem;
+	color: #64748b;
+	text-decoration: none;
+	padding: 0.25rem 0.5rem;
+	border-radius: 6px;
+	border-left: 2px solid transparent;
+	transition: color 0.2s, border-color 0.2s, background 0.2s;
+	line-height: 1.4;
+	}
+
+:global(.toc-item:hover) {
+	color: #94a3b8;
+	background: rgba(255,255,255,0.04);
+	}
+
+:global(.toc-active) {
+	color: #fb923c !important;
+	border-left-color: #f97316 !important;
+	background: rgba(249,115,22,0.06) !important;
+	}
+
+:global(.toc-level-2) {
+	padding-left: 1rem;
+	}
+
+:global(.toc-level-3) {
+	padding-left: 1.75rem;
+	font-size: 0.73rem;
+	}
+
+/* ── Article content overrides ── */
+.article-content {
+	min-width: 0;
+	}
+</style>
