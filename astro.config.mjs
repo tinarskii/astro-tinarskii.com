@@ -10,6 +10,6 @@ import vercel from "@astrojs/vercel/serverless";
 export default defineConfig({
   site: "https://tin.otternoon.com",
   integrations: [mdx(), sitemap(), tailwind(), vue()],
-  output: "hybrid",
+  output: "static",
   adapter: vercel()
 });
