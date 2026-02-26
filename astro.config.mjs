@@ -1,15 +1,20 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import tailwind from "@astrojs/tailwind";
 import vue from "@astrojs/vue";
 
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
+
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://tin.otternoon.com",
-  integrations: [mdx(), sitemap(), tailwind(), vue()],
+  integrations: [mdx(), sitemap(), vue()],
   output: "static",
-  adapter: vercel()
+  adapter: vercel(),
+
+  vite: {
+    plugins: [tailwindcss()]
+  }
 });
